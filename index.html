@@ -64,4 +64,43 @@
       document.getElementById('budget-pct').textContent = pct + '%';
       document.getElementById('budget-remaining').textContent = '₹' + Math.max(0, BUDGET - monthSpent).toLocaleString('en-IN') + ' remaining';
       const bar = document.getElementById('bar');
-      bar.style.background = pct >= 90 ? '#E24B4A' : p
+      bar.style.background = pct >= 90 ? '#E24B4A' : pct >= 70 ? '#EF9F27' : '#1D9E75';
+    }
+
+    async function logExpense() {
+      const cat = document.getElementById('cat').value;
+      const amt = parseFloat(document.getElementById('amt').value);
+      const note = document.getElementById('note').value.trim();
+      const status = document.getElementById('status');
+
+      if (!amt || amt <= 0) { status.textContent = 'enter a valid amount'; return; }
+
+      status.textContent = 'logging...';
+      document.querySelector('button').disabled = true;
+
+      const today = new Date().toISOString().slice(0, 10);
+
+      try {
+        await fetch(WEBHOOK, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: today, cat, amt, note })
+        });
+        monthSpent += amt;
+        localStorage.setItem('monthSpent', monthSpent);
+        updateBar();
+        status.textContent = 'logged!';
+        document.getElementById('amt').value = '';
+        document.getElementById('note').value = '';
+      } catch(e) {
+        status.textContent = 'failed. check connection.';
+      }
+
+      document.querySelector('button').disabled = false;
+    }
+
+    updateBar();
+  </script>
+</body>
+</html>
