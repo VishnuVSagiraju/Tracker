@@ -7,64 +7,92 @@
   <link rel="manifest" href="manifest.json">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 2rem 1rem; }
-    .card { background: white; border-radius: 16px; padding: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    body { font-family: sans-serif; background: #f5f5f5; min-height: 100vh; padding: 1.5rem 1rem; }
+    .container { max-width: 400px; margin: 0 auto; }
     h1 { font-size: 20px; font-weight: 600; margin-bottom: 1.5rem; color: #111; }
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+    .metric { background: white; border-radius: 12px; padding: 0.75rem 1rem; }
+    .metric-label { font-size: 11px; color: #999; margin-bottom: 4px; }
+    .metric-value { font-size: 18px; font-weight: 600; color: #111; }
+    .card { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; }
+    .budget-label { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 6px; }
+    .bar-bg { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s; }
     label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; margin-top: 1rem; }
     select, input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: white; }
     button { margin-top: 1.5rem; width: 100%; padding: 12px; background: #111; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; }
     button:active { opacity: 0.8; }
     #status { margin-top: 1rem; text-align: center; font-size: 14px; color: #666; min-height: 20px; }
-    .budget { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
-    .budget-label { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 6px; }
-    .bar-bg { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s; }
+    .remaining { font-size: 12px; color: #999; margin-top: 4px; }
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="container">
     <h1>expense tracker</h1>
 
-    <label>category</label>
-    <select id="cat">
-      <option value="food">food</option>
-      <option value="cigs">cigs</option>
-      <option value="transport">transport</option>
-      <option value="rent">rent</option>
-      <option value="misc">misc</option>
-    </select>
+    <div class="summary-grid">
+      <div class="metric"><div class="metric-label">today</div><div class="metric-value" id="today">...</div></div>
+      <div class="metric"><div class="metric-label">this week</div><div class="metric-value" id="week">...</div></div>
+      <div class="metric"><div class="metric-label">this month</div><div class="metric-value" id="month">...</div></div>
+    </div>
 
-    <label>amount (₹)</label>
-    <input type="number" id="amt" placeholder="0" min="0" />
-
-    <label>note (optional)</label>
-    <input type="text" id="note" placeholder="e.g. dinner, auto" />
-
-    <button onclick="logExpense()">log expense</button>
-    <div id="status"></div>
-
-    <div class="budget">
+    <div class="card">
       <div class="budget-label">
         <span>monthly budget</span>
         <span id="budget-pct">0%</span>
       </div>
       <div class="bar-bg"><div class="bar-fill" id="bar" style="width:0%"></div></div>
-      <div style="font-size:12px; color:#999; margin-top:4px;" id="budget-remaining">₹7,000 remaining</div>
+      <div class="remaining" id="remaining">loading...</div>
+    </div>
+
+    <div class="card">
+      <label>category</label>
+      <select id="cat">
+        <option value="food">food</option>
+        <option value="cigs">cigs</option>
+        <option value="transport">transport</option>
+        <option value="rent">rent</option>
+        <option value="misc">misc</option>
+      </select>
+
+      <label>amount (₹)</label>
+      <input type="number" id="amt" placeholder="0" min="0" />
+
+      <label>note (optional)</label>
+      <input type="text" id="note" placeholder="e.g. dinner, auto" />
+
+      <button onclick="logExpense()">log expense</button>
+      <div id="status"></div>
     </div>
   </div>
 
   <script>
     const WEBHOOK = "https://script.google.com/macros/s/AKfycbx3u4eKack3-25xsPMi-CsL0wheLdXf0i2hpoA3YIy9Y5AWirCl92Gn218MiAXDtL0S/exec";
+    const SECRET_KEY = "your_secret_key_here";
     const BUDGET = 7000;
-    let monthSpent = parseFloat(localStorage.getItem('monthSpent') || '0');
 
-    function updateBar() {
-      const pct = Math.min(100, Math.round((monthSpent / BUDGET) * 100));
+    function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+    function updateDisplay(data) {
+      document.getElementById('today').textContent = fmt(data.today || 0);
+      document.getElementById('week').textContent = fmt(data.week || 0);
+      document.getElementById('month').textContent = fmt(data.month || 0);
+      const budget = data.budget || BUDGET;
+      const pct = Math.min(100, Math.round(((data.month || 0) / budget) * 100));
       document.getElementById('bar').style.width = pct + '%';
+      document.getElementById('bar').style.background = pct >= 90 ? '#E24B4A' : pct >= 70 ? '#EF9F27' : '#1D9E75';
       document.getElementById('budget-pct').textContent = pct + '%';
-      document.getElementById('budget-remaining').textContent = '₹' + Math.max(0, BUDGET - monthSpent).toLocaleString('en-IN') + ' remaining';
-      const bar = document.getElementById('bar');
-      bar.style.background = pct >= 90 ? '#E24B4A' : pct >= 70 ? '#EF9F27' : '#1D9E75';
+      document.getElementById('remaining').textContent = fmt(data.remaining || budget) + ' remaining of ' + fmt(budget);
+    }
+
+    async function loadSummary() {
+      try {
+        const res = await fetch(WEBHOOK + '?key=' + SECRET_KEY);
+        const data = await res.json();
+        if (!data.error) updateDisplay(data);
+      } catch(e) {
+        document.getElementById('remaining').textContent = 'could not load summary';
+      }
     }
 
     async function logExpense() {
@@ -72,35 +100,38 @@
       const amt = parseFloat(document.getElementById('amt').value);
       const note = document.getElementById('note').value.trim();
       const status = document.getElementById('status');
+      const btn = document.querySelector('button');
 
       if (!amt || amt <= 0) { status.textContent = 'enter a valid amount'; return; }
 
       status.textContent = 'logging...';
-      document.querySelector('button').disabled = true;
+      btn.disabled = true;
 
       const today = new Date().toISOString().slice(0, 10);
 
       try {
-        await fetch(WEBHOOK, {
+        const res = await fetch(WEBHOOK, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ date: today, cat, amt, note })
+          body: JSON.stringify({ date: today, cat, amt, note, key: SECRET_KEY })
         });
-        monthSpent += amt;
-        localStorage.setItem('monthSpent', monthSpent);
-        updateBar();
-        status.textContent = 'logged!';
-        document.getElementById('amt').value = '';
-        document.getElementById('note').value = '';
+        const data = await res.json();
+        if (data.success) {
+          updateDisplay(data);
+          status.textContent = 'logged!';
+          document.getElementById('amt').value = '';
+          document.getElementById('note').value = '';
+        } else {
+          status.textContent = 'error: ' + (data.error || 'unknown');
+        }
       } catch(e) {
         status.textContent = 'failed. check connection.';
       }
 
-      document.querySelector('button').disabled = false;
+      btn.disabled = false;
     }
 
-    updateBar();
+    loadSummary();
   </script>
 </body>
 </html>
