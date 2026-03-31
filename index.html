@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 2rem 1rem; }
+    .card { background: white; border-radius: 16px; padding: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    h1 { font-size: 20px; font-weight: 600; margin-bottom: 1.5rem; color: #111; }
+    label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; margin-top: 1rem; }
+    select, input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: white; }
+    button { margin-top: 1.5rem; width: 100%; padding: 12px; background: #111; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; }
+    button:active { opacity: 0.8; }
+    #status { margin-top: 1rem; text-align: center; font-size: 14px; color: #666; min-height: 20px; }
+    .budget { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
+    .budget-label { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 6px; }
+    .bar-bg { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>expense tracker</h1>
+
+    <label>category</label>
+    <select id="cat">
+      <option value="food">food</option>
+      <option value="cigs">cigs</option>
+      <option value="transport">transport</option>
+      <option value="rent">rent</option>
+      <option value="misc">misc</option>
+    </select>
+
+    <label>amount (₹)</label>
+    <input type="number" id="amt" placeholder="0" min="0" />
+
+    <label>note (optional)</label>
+    <input type="text" id="note" placeholder="e.g. dinner, auto" />
+
+    <button onclick="logExpense()">log expense</button>
+    <div id="status"></div>
+
+    <div class="budget">
+      <div class="budget-label">
+        <span>monthly budget</span>
+        <span id="budget-pct">0%</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+      <div style="font-size:12px; color:#999; margin-top:4px;" id="budget-remaining">₹7,000 remaining</div>
+    </div>
+  </div>
+
+  <script>
+    const WEBHOOK = "https://script.google.com/macros/s/AKfycbx3u4eKack3-25xsPMi-CsL0wheLdXf0i2hpoA3YIy9Y5AWirCl92Gn218MiAXDtL0S/exec";
+    const BUDGET = 7000;
+    let monthSpent = parseFloat(localStorage.getItem('monthSpent') || '0');
+
+    function updateBar() {
+      const pct = Math.min(100, Math.round((monthSpent / BUDGET) * 100));
+      document.getElementById('bar').style.width = pct + '%';
+      document.getElementById('budget-pct').textContent = pct + '%';
+      document.getElementById('budget-remaining').textContent = '₹' + Math.max(0, BUDGET - monthSpent).toLocaleString('en-IN') + ' remaining';
+      const bar = document.getElementById('bar');
+      bar.style.background = pct >= 90 ? '#E24B4A' : p
