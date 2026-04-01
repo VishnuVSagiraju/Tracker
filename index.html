@@ -44,7 +44,7 @@
     .bar-bg { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
     .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s, background 0.3s; }
     .hint { font-size: 12px; color: #999; margin-bottom: 0.75rem; }
-    .dots-row { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 0.5rem; }
+    .dots-row { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 0.5rem; }
     .dot { width: 5px; height: 5px; border-radius: 50%; background: #e0e0e0; flex-shrink: 0; }
     .dot.green { background: #1D9E75; }
     .dot.red { background: #E24B4A; }
@@ -281,10 +281,8 @@
     var todayEl = document.getElementById('s-today');
     todayEl.textContent = fmt(todayAmt);
     todayEl.className = 'metric-value ' + (todayPct >= 1 ? 'mv-red' : todayPct >= 0.7 ? 'mv-amber' : 'mv-green');
-
     document.getElementById('s-week').textContent = fmt(data.week || 0);
     document.getElementById('s-cycle').textContent = fmt(data.cycleBudget || 0);
-
     var budget = data.budget || 7000;
     var spent = data.cycleBudget || 0;
     var pct = Math.min(100, Math.round((spent / budget) * 100));
@@ -293,7 +291,6 @@
     bar.style.background = pct >= 90 ? '#E24B4A' : pct >= 70 ? '#EF9F27' : '#1D9E75';
     document.getElementById('budget-pct').textContent = pct + '%';
     document.getElementById('remaining').textContent = fmt(data.remaining || budget) + ' remaining of ' + fmt(budget);
-
     renderDayDots(data.dayDots || "0", data.cycleDays || 31, data.lastPayday);
   }
 
@@ -303,7 +300,6 @@
     var todayEp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     var processedUpTo = todayEp - 86400000;
     var cycleStartEp = lastPayday ? parseLocalEpoch(lastPayday) : todayEp;
-
     var html = '';
     for (var i = 0; i < cycleDays; i++) {
       var dayEp = cycleStartEp + i * 86400000;
@@ -336,12 +332,10 @@
     var data = breakdown[period] || {};
     var titles = { today: "today's spending", week: "this week's spending", cycle: "this cycle's spending" };
     document.getElementById('breakdown-title').textContent = titles[period];
-
     var entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
     document.getElementById('breakdown-rows').innerHTML = entries.length
       ? entries.map(([cat, amt]) => `<div class="breakdown-row"><span>${cat}</span><span style="font-weight:600;">${fmt(amt)}</span></div>`).join('')
       : '<div class="breakdown-empty">no entries yet</div>';
-
     var fixedSection = document.getElementById('fixed-pills-section');
     if (period === 'cycle' && fixedExpenses.length) {
       fixedSection.style.display = 'block';
@@ -351,7 +345,6 @@
     } else {
       fixedSection.style.display = 'none';
     }
-
     var inlineSection = document.getElementById('budget-inline-section');
     if (period === 'week') {
       inlineSection.innerHTML = '';
@@ -545,21 +538,17 @@
       : document.getElementById('note-text').value.trim();
     var status = document.getElementById('log-status');
     var btn = document.querySelector('#tab-log .btn');
-
     if (!amt || amt <= 0) { status.textContent = 'enter a valid amount'; return; }
-
     var prevData = optimisticUpdate(cat, amt);
     document.getElementById('amt').value = '';
     if (!isFixed) document.getElementById('note-text').value = '';
     status.textContent = 'logging...';
     btn.disabled = true;
-
     if (isFixed && note) {
       fixedState[note] = true;
       saveFixedState(fixedState);
       if (activeKPI === 'cycle') renderBreakdown('cycle');
     }
-
     try {
       var data = await post({ date: todayStr(), cat, amt, note });
       if (data.success) {
@@ -585,7 +574,17 @@
   }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/Tracker/sw.js', { scope: '/Tracker/' });
+    navigator.serviceWorker.register('/Tracker/sw.js', { scope: '/Tracker/' }).then(reg => {
+      reg.addEventListener('updatefound', () => {
+        var newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            newWorker.postMessage('skipWaiting');
+            window.location.reload();
+          }
+        });
+      });
+    });
   }
 
   flushQueue();
