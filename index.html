@@ -306,7 +306,7 @@
   loadSummary();
   showOfflineBadge();
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/Tracker/sw.js');
+    navigator.serviceWorker.register('/Tracker/sw.js', { scope: '/Tracker/' });
   }
 </script>
 </body>
