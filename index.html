@@ -15,24 +15,39 @@
     h2 { font-size: 18px; font-weight: 600; color: #111; margin-bottom: 0.25rem; }
     .subtitle { font-size: 12px; color: #999; margin-bottom: 1.25rem; }
     .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem; }
-    .metric { background: white; border-radius: 12px; padding: 0.75rem; cursor: pointer; transition: box-shadow 0.15s; border: 2px solid transparent; }
+    .metric { background: white; border-radius: 12px; padding: 0.75rem; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; }
     .metric.active { border-color: #111; }
-    .metric:active { opacity: 0.8; }
     .metric-label { font-size: 11px; color: #999; margin-bottom: 3px; }
-    .metric-value { font-size: 17px; font-weight: 600; color: #111; }
-    .metric-value.green { color: #1D9E75; }
-    .metric-value.amber { color: #EF9F27; }
-    .metric-value.red { color: #E24B4A; }
+    .metric-value { font-size: 17px; font-weight: 600; }
+    .mv-green { color: #1D9E75; }
+    .mv-amber { color: #EF9F27; }
+    .mv-red { color: #E24B4A; }
+    .mv-default { color: #111; }
     .breakdown-panel { background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; display: none; }
     .breakdown-panel.show { display: block; }
     .breakdown-title { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
-    .breakdown-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+    .breakdown-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; color: #111; }
     .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-empty { font-size: 13px; color: #bbb; padding: 4px 0; }
+    .fixed-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f5f5f5; }
+    .fixed-pill { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 500; border: none; cursor: pointer; transition: opacity 0.15s; }
+    .fixed-pill.paid { background: #E1F5EE; color: #0F6E56; }
+    .fixed-pill.unpaid { background: #FCEBEB; color: #A32D2D; }
+    .budget-inline { display: flex; align-items: center; gap: 8px; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f5f5f5; }
+    .budget-inline-label { font-size: 12px; color: #999; }
+    .budget-inline-val { font-size: 14px; font-weight: 600; color: #111; cursor: pointer; border-bottom: 1px dotted #999; }
+    .budget-inline-hint { font-size: 11px; color: #bbb; }
+    .budget-inline-input { width: 90px; padding: 2px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-weight: 600; }
     .card { background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; }
-    .row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #666; margin-bottom: 6px; }
-    .bar-bg { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+    .bar-wrap { margin-bottom: 0.5rem; }
+    .bar-row { display: flex; justify-content: space-between; font-size: 13px; color: #666; margin-bottom: 6px; }
+    .bar-bg { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
     .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s, background 0.3s; }
-    .hint { font-size: 12px; color: #999; margin-top: 4px; }
+    .hint { font-size: 12px; color: #999; margin-bottom: 0.75rem; }
+    .dots-row { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 0.5rem; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #e0e0e0; flex-shrink: 0; }
+    .dot.green { background: #1D9E75; }
+    .dot.red { background: #E24B4A; }
     label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; margin-top: 1rem; }
     select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: white; -webkit-appearance: none; }
     .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 1rem; background: #111; color: white; }
@@ -40,42 +55,33 @@
     .btn:disabled { opacity: 0.4; cursor: default; }
     .btn-green { background: #1D9E75; }
     .btn-outline { background: white; color: #111; border: 1px solid #ddd; }
-    .btn-sm { width: auto; padding: 10px 16px; font-size: 14px; margin-top: 0; }
+    .btn-sm { width: auto; padding: 8px 14px; font-size: 13px; margin-top: 0; }
+    .btn-danger-sm { background: white; color: #E24B4A; border: 1px solid #E24B4A; }
     .status { margin-top: 0.75rem; text-align: center; font-size: 13px; color: #666; min-height: 18px; }
     .badge { display: none; background: #FFF3CD; color: #856404; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-bottom: 1rem; text-align: center; cursor: pointer; }
     .badge.show { display: block; }
     .section-title { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
-    .fixed-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
-    .fixed-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
-    .fixed-item.done { background: #f0faf5; border-color: #1D9E75; }
-    .fixed-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; }
-    .fixed-item.done .fixed-check { background: #1D9E75; border-color: #1D9E75; color: white; }
-    .fixed-name { font-size: 14px; color: #111; }
-    .fixed-item.done .fixed-name { color: #1D9E75; text-decoration: line-through; }
-    .cat-section { margin-top: 1.5rem; }
-    .cat-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0; border-top: 1px solid #eee; }
-    .cat-toggle-header span { font-size: 13px; color: #666; }
-    .cat-toggle-arrow { font-size: 12px; color: #999; transition: transform 0.2s; }
-    .cat-toggle-arrow.open { transform: rotate(180deg); }
-    .cat-body { display: none; }
-    .cat-body.open { display: block; }
-    .cat-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
-    .cat-name { font-size: 15px; color: #111; }
-    .cat-meta { font-size: 11px; color: #bbb; margin-right: 8px; }
+    .collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 2px 0; }
+    .collapsible-header span { font-size: 13px; color: #666; }
+    .collapsible-arrow { font-size: 11px; color: #bbb; transition: transform 0.2s; display: inline-block; }
+    .collapsible-arrow.open { transform: rotate(180deg); }
+    .collapsible-body { display: none; margin-top: 0.75rem; }
+    .collapsible-body.open { display: block; }
+    .list-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+    .list-row:last-child { border-bottom: none; }
+    .list-row-name { font-size: 14px; color: #111; }
     .toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
     .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
     .slider { position: absolute; cursor: pointer; inset: 0; background: #ddd; border-radius: 24px; transition: 0.2s; }
     .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
     .toggle input:checked + .slider { background: #1D9E75; }
     .toggle input:checked + .slider:before { transform: translateX(18px); }
-    .add-row { display: flex; gap: 8px; margin-top: 1rem; }
+    .add-row { display: flex; gap: 8px; margin-top: 0.75rem; }
     .add-row input { flex: 1; margin-top: 0; }
     .nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #eee; display: flex; height: 60px; z-index: 100; }
     .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: none; border: none; cursor: pointer; color: #bbb; font-size: 11px; }
     .nav-btn.active { color: #111; }
     .nav-icon { font-size: 20px; line-height: 1; }
-    .daily-budget-row { display: flex; align-items: center; gap: 8px; margin-top: 0.5rem; }
-    .daily-budget-row input { width: 100px; margin-top: 0; }
   </style>
 </head>
 <body>
@@ -88,27 +94,34 @@
   <div class="grid3">
     <div class="metric" id="kpi-today" onclick="toggleBreakdown('today')">
       <div class="metric-label">today</div>
-      <div class="metric-value" id="s-today">—</div>
+      <div class="metric-value mv-default" id="s-today">—</div>
     </div>
     <div class="metric" id="kpi-week" onclick="toggleBreakdown('week')">
       <div class="metric-label">this week</div>
-      <div class="metric-value" id="s-week">—</div>
+      <div class="metric-value mv-default" id="s-week">—</div>
     </div>
     <div class="metric" id="kpi-cycle" onclick="toggleBreakdown('cycle')">
       <div class="metric-label">this cycle</div>
-      <div class="metric-value" id="s-cycle">—</div>
+      <div class="metric-value mv-default" id="s-cycle">—</div>
     </div>
   </div>
 
   <div class="breakdown-panel" id="breakdown-panel">
-    <div class="breakdown-title" id="breakdown-title">today</div>
+    <div class="breakdown-title" id="breakdown-title">breakdown</div>
     <div id="breakdown-rows"></div>
+    <div id="fixed-pills-section" style="display:none;">
+      <div class="fixed-pills" id="fixed-pills"></div>
+    </div>
+    <div id="budget-inline-section"></div>
   </div>
 
   <div class="card">
-    <div class="row"><span>cycle budget</span><span id="budget-pct">0%</span></div>
-    <div class="bar-bg"><div class="bar-fill" id="bar" style="width:0%"></div></div>
-    <div class="hint" id="remaining">loading...</div>
+    <div class="bar-wrap">
+      <div class="bar-row"><span>cycle budget</span><span id="budget-pct">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+      <div class="hint" id="remaining">loading...</div>
+      <div class="dots-row" id="dots-row"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -117,7 +130,7 @@
     <label>amount (₹)</label>
     <input type="number" id="amt" placeholder="0" min="0" inputmode="numeric" />
     <label id="note-label">note (optional)</label>
-    <select id="note-select" style="display:none"></select>
+    <select id="note-select" style="display:none;"></select>
     <input type="text" id="note-text" placeholder="e.g. dinner, auto" />
     <button class="btn" onclick="logExpense()">log expense</button>
     <div class="status" id="log-status"></div>
@@ -131,41 +144,37 @@
   <div class="card">
     <div class="section-title">pay cycle</div>
     <button class="btn btn-green" id="payday-btn" onclick="logPayday()">I got paid today</button>
-    <div class="hint" id="last-payday" style="margin-top:8px;">last payday: —</div>
+    <div class="hint" id="last-payday" style="margin-top:8px;margin-bottom:0;">last payday: —</div>
   </div>
 
   <div class="card">
-    <div class="section-title">daily budget</div>
-    <div class="daily-budget-row">
-      <input type="number" id="daily-budget-input" placeholder="500" inputmode="numeric" />
-      <button class="btn btn-outline btn-sm" onclick="saveDailyBudget()">save</button>
+    <div class="collapsible-header" onclick="toggleSection('fixed')">
+      <span>fixed expenses</span>
+      <span class="collapsible-arrow" id="fixed-arrow">▼</span>
     </div>
-    <div class="status" id="daily-budget-status"></div>
-  </div>
-
-  <div class="card">
-    <div class="section-title">fixed expenses</div>
-    <div class="fixed-list" id="fixed-manage-list"></div>
-    <div class="add-row">
-      <input type="text" id="new-fixed" placeholder="new fixed expense" />
-      <button class="btn btn-outline btn-sm" onclick="addFixed()">add</button>
+    <div class="collapsible-body" id="fixed-body">
+      <div id="fixed-manage-list"></div>
+      <div class="add-row">
+        <input type="text" id="new-fixed" placeholder="new fixed expense" />
+        <button class="btn btn-outline btn-sm" onclick="addFixed()">add</button>
+      </div>
+      <button class="btn" onclick="saveFixed()">save</button>
+      <div class="status" id="fixed-status"></div>
     </div>
-    <button class="btn" onclick="saveFixed()">save fixed expenses</button>
-    <div class="status" id="fixed-status"></div>
   </div>
 
   <div class="card">
-    <div class="cat-toggle-header" onclick="toggleCatSection()">
+    <div class="collapsible-header" onclick="toggleSection('cat')">
       <span>manage categories</span>
-      <span class="cat-toggle-arrow" id="cat-arrow">▼</span>
+      <span class="collapsible-arrow" id="cat-arrow">▼</span>
     </div>
-    <div class="cat-body" id="cat-body">
-      <div id="cat-list" style="margin-top:0.75rem;"></div>
+    <div class="collapsible-body" id="cat-body">
+      <div id="cat-list" style="margin-top:0.25rem;"></div>
       <div class="add-row">
         <input type="text" id="new-cat" placeholder="new category name" />
         <button class="btn btn-outline btn-sm" onclick="addCategory()">add</button>
       </div>
-      <button class="btn" onclick="saveCategories()">save categories</button>
+      <button class="btn" onclick="saveCategories()">save</button>
       <div class="status" id="cfg-status"></div>
     </div>
   </div>
@@ -190,11 +199,19 @@
   let fixedExpenses = [];
   let fixedState = {};
   let breakdown = { today: {}, week: {}, cycle: {} };
-  let currentData = { today: 0, week: 0, cycle: 0, cycleBudget: 0, budget: 7000, remaining: 7000, dailyBudget: 500 };
   let activeKPI = null;
+  let currentData = { today: 0, week: 0, cycle: 0, cycleBudget: 0, budget: 7000, remaining: 7000, dailyBudget: 500, dayDots: "0", cycleDays: 31 };
 
   function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
-  function todayStr() { return new Date().toISOString().slice(0, 10); }
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function parseLocalEpoch(str) {
+    if (!str) return 0;
+    var p = str.split('-');
+    return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).getTime();
+  }
   function getQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch(e) { return []; } }
   function saveQueue(q) { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch(e) {} }
   function loadFixedState() { try { return JSON.parse(localStorage.getItem(FIXED_STATE_KEY) || '{}'); } catch(e) { return {}; } }
@@ -207,9 +224,9 @@
     document.getElementById('nav-' + tab).classList.add('active');
   }
 
-  function toggleCatSection() {
-    const body = document.getElementById('cat-body');
-    const arrow = document.getElementById('cat-arrow');
+  function toggleSection(id) {
+    var body = document.getElementById(id + '-body');
+    var arrow = document.getElementById(id + '-arrow');
     body.classList.toggle('open');
     arrow.classList.toggle('open');
   }
@@ -234,54 +251,73 @@
   }
 
   function applyData(data) {
-    currentData = data;
+    currentData = { ...currentData, ...data };
     if (data.breakdown) breakdown = data.breakdown;
-    updateDisplay(data);
     if (data.categories && data.categories.length) {
       cats = data.categories;
       renderCatDropdown();
       renderCatList();
     }
-    if (data.fixedExpenses && data.fixedExpenses.length) {
+    if (data.fixedExpenses) {
       fixedExpenses = data.fixedExpenses;
       fixedState = loadFixedState();
-      renderFixedChecklist();
-      renderFixedManage();
       renderNoteSelect();
+      renderFixedManage();
     }
     if (data.lastPayday) {
       document.getElementById('cycle-label').textContent = 'cycle from ' + data.lastPayday;
       document.getElementById('last-payday').textContent = 'last payday: ' + data.lastPayday;
+    } else {
+      document.getElementById('cycle-label').textContent = 'no payday set — go to settings';
     }
-    if (data.dailyBudget) {
-      document.getElementById('daily-budget-input').value = data.dailyBudget;
-    }
+    updateDisplay(data);
     if (activeKPI) renderBreakdown(activeKPI);
   }
 
   function updateDisplay(data) {
-    const dailyBudget = data.dailyBudget || 500;
-    const todayAmt = data.today || 0;
-    const todayPct = todayAmt / dailyBudget;
-    const todayEl = document.getElementById('s-today');
+    var dailyBudget = data.dailyBudget || 500;
+    var todayAmt = data.today || 0;
+    var todayPct = dailyBudget > 0 ? todayAmt / dailyBudget : 0;
+    var todayEl = document.getElementById('s-today');
     todayEl.textContent = fmt(todayAmt);
-    todayEl.className = 'metric-value' + (todayPct >= 1 ? ' red' : todayPct >= 0.7 ? ' amber' : ' green');
+    todayEl.className = 'metric-value ' + (todayPct >= 1 ? 'mv-red' : todayPct >= 0.7 ? 'mv-amber' : 'mv-green');
 
     document.getElementById('s-week').textContent = fmt(data.week || 0);
     document.getElementById('s-cycle').textContent = fmt(data.cycleBudget || 0);
 
-    const budget = data.budget || 7000;
-    const spent = data.cycleBudget || 0;
-    const pct = Math.min(100, Math.round((spent / budget) * 100));
-    const bar = document.getElementById('bar');
+    var budget = data.budget || 7000;
+    var spent = data.cycleBudget || 0;
+    var pct = Math.min(100, Math.round((spent / budget) * 100));
+    var bar = document.getElementById('bar');
     bar.style.width = pct + '%';
     bar.style.background = pct >= 90 ? '#E24B4A' : pct >= 70 ? '#EF9F27' : '#1D9E75';
     document.getElementById('budget-pct').textContent = pct + '%';
     document.getElementById('remaining').textContent = fmt(data.remaining || budget) + ' remaining of ' + fmt(budget);
+
+    renderDayDots(data.dayDots || "0", data.cycleDays || 31, data.lastPayday);
+  }
+
+  function renderDayDots(hexStr, cycleDays, lastPayday) {
+    var dotNum = parseInt(hexStr, 16) || 0;
+    var now = new Date();
+    var todayEp = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    var processedUpTo = todayEp - 86400000;
+    var cycleStartEp = lastPayday ? parseLocalEpoch(lastPayday) : todayEp;
+
+    var html = '';
+    for (var i = 0; i < cycleDays; i++) {
+      var dayEp = cycleStartEp + i * 86400000;
+      var cls = 'dot';
+      if (dayEp <= processedUpTo) {
+        cls += ((dotNum >> i) & 1) ? ' red' : ' green';
+      }
+      html += '<div class="' + cls + '" title="Day ' + (i+1) + '"></div>';
+    }
+    document.getElementById('dots-row').innerHTML = html;
   }
 
   function toggleBreakdown(period) {
-    const panel = document.getElementById('breakdown-panel');
+    var panel = document.getElementById('breakdown-panel');
     if (activeKPI === period && panel.classList.contains('show')) {
       panel.classList.remove('show');
       document.querySelectorAll('.metric').forEach(m => m.classList.remove('active'));
@@ -297,34 +333,88 @@
   }
 
   function renderBreakdown(period) {
-    const data = breakdown[period] || {};
-    document.getElementById('breakdown-title').textContent = period === 'today' ? "today's spending" : period === 'week' ? "this week's spending" : "this cycle's spending";
-    const rows = Object.entries(data).sort((a, b) => b[1] - a[1]);
-    if (!rows.length) {
-      document.getElementById('breakdown-rows').innerHTML = '<div style="font-size:14px;color:#999;padding:8px 0;">no entries yet</div>';
-      return;
+    var data = breakdown[period] || {};
+    var titles = { today: "today's spending", week: "this week's spending", cycle: "this cycle's spending" };
+    document.getElementById('breakdown-title').textContent = titles[period];
+
+    var entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+    document.getElementById('breakdown-rows').innerHTML = entries.length
+      ? entries.map(([cat, amt]) => `<div class="breakdown-row"><span>${cat}</span><span style="font-weight:600;">${fmt(amt)}</span></div>`).join('')
+      : '<div class="breakdown-empty">no entries yet</div>';
+
+    var fixedSection = document.getElementById('fixed-pills-section');
+    if (period === 'cycle' && fixedExpenses.length) {
+      fixedSection.style.display = 'block';
+      document.getElementById('fixed-pills').innerHTML = fixedExpenses.map(f =>
+        `<button class="fixed-pill ${fixedState[f] ? 'paid' : 'unpaid'}" onclick="toggleFixedPill('${f}')">${f}</button>`
+      ).join('');
+    } else {
+      fixedSection.style.display = 'none';
     }
-    document.getElementById('breakdown-rows').innerHTML = rows.map(([cat, amt]) =>
-      `<div class="breakdown-row"><span>${cat}</span><span style="font-weight:600;">${fmt(amt)}</span></div>`
-    ).join('');
+
+    var inlineSection = document.getElementById('budget-inline-section');
+    if (period === 'week') {
+      inlineSection.innerHTML = '';
+    } else {
+      var label = period === 'today' ? 'daily budget' : 'cycle budget';
+      var value = period === 'today' ? (currentData.dailyBudget || 500) : (currentData.budget || 7000);
+      var pid = 'bil-' + period;
+      inlineSection.innerHTML = `
+        <div class="budget-inline">
+          <span class="budget-inline-label">${label}:</span>
+          <span class="budget-inline-val" id="${pid}" onclick="startEditBudget('${period}')">${fmt(value)}</span>
+          <span class="budget-inline-hint">tap to edit</span>
+        </div>`;
+    }
+  }
+
+  function startEditBudget(period) {
+    var pid = 'bil-' + period;
+    var current = period === 'today' ? (currentData.dailyBudget || 500) : (currentData.budget || 7000);
+    var el = document.getElementById(pid);
+    el.outerHTML = `<input type="number" class="budget-inline-input" id="${pid}-inp" value="${current}"
+      onblur="saveBudgetInline('${period}', this.value)"
+      onkeydown="if(event.key==='Enter'){this.blur();}" />`;
+    var inp = document.getElementById(pid + '-inp');
+    inp.focus(); inp.select();
+  }
+
+  async function saveBudgetInline(period, value) {
+    var val = parseFloat(value);
+    if (val && val > 0) {
+      var action = period === 'today' ? 'update_daily_budget' : 'update_budget';
+      var field = period === 'today' ? 'dailyBudget' : 'budget';
+      try {
+        await post({ action, [field]: val });
+        currentData[field] = val;
+        if (period !== 'today') updateDisplay(currentData);
+      } catch(e) {}
+    }
+    renderBreakdown(period);
+  }
+
+  function toggleFixedPill(name) {
+    fixedState[name] = !fixedState[name];
+    saveFixedState(fixedState);
+    renderBreakdown('cycle');
   }
 
   function onCatChange() {
-    const cat = document.getElementById('cat').value;
-    const isFixed = cat === 'rent & fixed';
+    var cat = document.getElementById('cat').value;
+    var isFixed = cat === 'rent & fixed';
     document.getElementById('note-text').style.display = isFixed ? 'none' : 'block';
     document.getElementById('note-select').style.display = isFixed ? 'block' : 'none';
     document.getElementById('note-label').textContent = isFixed ? 'which expense?' : 'note (optional)';
   }
 
   function renderNoteSelect() {
-    const sel = document.getElementById('note-select');
-    sel.innerHTML = fixedExpenses.map(f => `<option value="${f}">${f}</option>`).join('');
+    document.getElementById('note-select').innerHTML = fixedExpenses.map(f =>
+      `<option value="${f}">${f}</option>`).join('');
   }
 
   function renderCatDropdown() {
-    const sel = document.getElementById('cat');
-    const cur = sel.value;
+    var sel = document.getElementById('cat');
+    var cur = sel.value;
     sel.innerHTML = cats.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
     if (cur) sel.value = cur;
     onCatChange();
@@ -332,10 +422,10 @@
 
   function renderCatList() {
     document.getElementById('cat-list').innerHTML = cats.map((c, i) => `
-      <div class="cat-row">
-        <span class="cat-name">${c.name}</span>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span class="cat-meta">${c.inBudget ? 'in budget' : 'excluded'}</span>
+      <div class="list-row">
+        <span class="list-row-name">${c.name}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;color:#bbb;">${c.inBudget ? 'in budget' : 'excluded'}</span>
           <label class="toggle">
             <input type="checkbox" ${c.inBudget ? 'checked' : ''} onchange="toggleCat(${i},this.checked)"/>
             <span class="slider"></span>
@@ -344,113 +434,65 @@
       </div>`).join('');
   }
 
-  function renderFixedChecklist() {
-    const logTab = document.getElementById('tab-log');
-    let checklist = document.getElementById('fixed-checklist');
-    if (!checklist) {
-      checklist = document.createElement('div');
-      checklist.id = 'fixed-checklist';
-      checklist.className = 'card';
-      checklist.innerHTML = '<div class="section-title">fixed expenses</div><div id="fixed-items"></div>';
-      logTab.insertBefore(checklist, logTab.querySelector('.card:last-of-type'));
-    }
-    document.getElementById('fixed-items').innerHTML = fixedExpenses.map(f => `
-      <div class="fixed-item ${fixedState[f] ? 'done' : ''}" onclick="toggleFixed('${f}')">
-        <div class="fixed-check">${fixedState[f] ? '✓' : ''}</div>
-        <span class="fixed-name">${f}</span>
-      </div>`).join('');
-  }
-
   function renderFixedManage() {
     document.getElementById('fixed-manage-list').innerHTML = fixedExpenses.map((f, i) => `
-      <div class="cat-row">
-        <span class="cat-name">${f}</span>
-        <button class="btn btn-outline btn-sm" onclick="removeFixed(${i})" style="padding:4px 10px;font-size:12px;color:#E24B4A;border-color:#E24B4A;">remove</button>
+      <div class="list-row">
+        <span class="list-row-name">${f}</span>
+        <button class="btn btn-outline btn-sm btn-danger-sm" onclick="removeFixed(${i})">remove</button>
       </div>`).join('');
-  }
-
-  function toggleFixed(name) {
-    fixedState[name] = !fixedState[name];
-    saveFixedState(fixedState);
-    renderFixedChecklist();
-  }
-
-  function autoCheckFixed(noteName) {
-    if (fixedExpenses.includes(noteName)) {
-      fixedState[noteName] = true;
-      saveFixedState(fixedState);
-      renderFixedChecklist();
-    }
-  }
-
-  function addFixed() {
-    const name = document.getElementById('new-fixed').value.trim();
-    if (!name) return;
-    fixedExpenses.push(name);
-    renderFixedChecklist();
-    renderFixedManage();
-    renderNoteSelect();
-    document.getElementById('new-fixed').value = '';
-  }
-
-  function removeFixed(i) {
-    fixedExpenses.splice(i, 1);
-    renderFixedChecklist();
-    renderFixedManage();
-    renderNoteSelect();
-  }
-
-  async function saveFixed() {
-    const status = document.getElementById('fixed-status');
-    status.textContent = 'saving...';
-    try {
-      const data = await post({ action: 'update_fixed', fixedExpenses });
-      status.textContent = data.success ? 'saved!' : 'error saving';
-      setTimeout(() => status.textContent = '', 2000);
-    } catch(e) { status.textContent = 'failed — try again'; }
-  }
-
-  async function saveDailyBudget() {
-    const val = parseFloat(document.getElementById('daily-budget-input').value);
-    const status = document.getElementById('daily-budget-status');
-    if (!val || val <= 0) { status.textContent = 'enter a valid amount'; return; }
-    status.textContent = 'saving...';
-    try {
-      const data = await post({ action: 'update_daily_budget', dailyBudget: val });
-      currentData.dailyBudget = val;
-      status.textContent = data.success ? 'saved!' : 'error';
-      setTimeout(() => status.textContent = '', 2000);
-    } catch(e) { status.textContent = 'failed — try again'; }
   }
 
   function toggleCat(i, val) { cats[i].inBudget = val; renderCatList(); }
 
   function addCategory() {
-    const name = document.getElementById('new-cat').value.trim().toLowerCase();
+    var name = document.getElementById('new-cat').value.trim().toLowerCase();
     if (!name) return;
     cats.push({ name, inBudget: true });
-    renderCatDropdown();
-    renderCatList();
+    renderCatDropdown(); renderCatList();
     document.getElementById('new-cat').value = '';
   }
 
+  function addFixed() {
+    var name = document.getElementById('new-fixed').value.trim();
+    if (!name) return;
+    fixedExpenses.push(name);
+    renderFixedManage(); renderNoteSelect();
+    document.getElementById('new-fixed').value = '';
+  }
+
+  function removeFixed(i) {
+    fixedExpenses.splice(i, 1);
+    renderFixedManage(); renderNoteSelect();
+    if (activeKPI === 'cycle') renderBreakdown('cycle');
+  }
+
   async function saveCategories() {
-    const status = document.getElementById('cfg-status');
-    status.textContent = 'saving...';
+    var st = document.getElementById('cfg-status');
+    st.textContent = 'saving...';
     try {
-      const data = await post({ action: 'update_categories', categories: cats });
-      status.textContent = data.success ? 'saved!' : 'error saving';
-      setTimeout(() => status.textContent = '', 2000);
-    } catch(e) { status.textContent = 'failed — try again'; }
+      var res = await post({ action: 'update_categories', categories: cats });
+      st.textContent = res.success ? 'saved!' : 'error';
+      setTimeout(() => st.textContent = '', 2000);
+    } catch(e) { st.textContent = 'failed'; }
+  }
+
+  async function saveFixed() {
+    var st = document.getElementById('fixed-status');
+    st.textContent = 'saving...';
+    try {
+      var res = await post({ action: 'update_fixed', fixedExpenses });
+      st.textContent = res.success ? 'saved!' : 'error';
+      setTimeout(() => st.textContent = '', 2000);
+    } catch(e) { st.textContent = 'failed'; }
   }
 
   async function logPayday() {
-    const btn = document.getElementById('payday-btn');
+    var btn = document.getElementById('payday-btn');
     btn.disabled = true; btn.textContent = 'logging...';
     fixedState = {};
     saveFixedState(fixedState);
     try {
-      const data = await post({ action: 'payday', date: todayStr() });
+      var data = await post({ action: 'payday', date: todayStr() });
       if (data.success) applyData(data);
       btn.textContent = 'done!';
       setTimeout(() => { btn.textContent = 'I got paid today'; btn.disabled = false; }, 2000);
@@ -458,8 +500,8 @@
   }
 
   function showOfflineBadge() {
-    const q = getQueue();
-    const badge = document.getElementById('offline-badge');
+    var q = getQueue();
+    var badge = document.getElementById('offline-badge');
     if (q.length > 0) {
       badge.textContent = q.length + ' expense(s) pending — tap to sync';
       badge.classList.add('show');
@@ -468,22 +510,23 @@
   }
 
   async function flushQueue() {
-    const q = getQueue();
+    var q = getQueue();
     if (!q.length) return;
     try {
-      const data = await post({ action: 'bulk', entries: q });
+      var data = await post({ action: 'bulk', entries: q });
       if (data.success) {
         saveQueue([]);
         showOfflineBadge();
+        if (data.breakdown) breakdown = data.breakdown;
         applyData(data);
       }
     } catch(e) {}
   }
 
   function optimisticUpdate(cat, amt) {
-    const prev = { ...currentData };
-    const inBudget = cats.find(c => c.name === cat)?.inBudget;
-    const updated = { ...currentData };
+    var prev = { ...currentData };
+    var inBudget = cats.find(c => c.name === cat)?.inBudget;
+    var updated = { ...currentData };
     updated.today += amt;
     updated.week += amt;
     updated.cycle += amt;
@@ -494,27 +537,31 @@
   }
 
   async function logExpense() {
-    const cat = document.getElementById('cat').value;
-    const amt = parseFloat(document.getElementById('amt').value);
-    const isFixed = cat === 'rent & fixed';
-    const note = isFixed
+    var cat = document.getElementById('cat').value;
+    var amt = parseFloat(document.getElementById('amt').value);
+    var isFixed = cat === 'rent & fixed';
+    var note = isFixed
       ? document.getElementById('note-select').value
       : document.getElementById('note-text').value.trim();
-    const status = document.getElementById('log-status');
-    const btn = document.querySelector('#tab-log .btn');
+    var status = document.getElementById('log-status');
+    var btn = document.querySelector('#tab-log .btn');
 
     if (!amt || amt <= 0) { status.textContent = 'enter a valid amount'; return; }
 
-    const prevData = optimisticUpdate(cat, amt);
+    var prevData = optimisticUpdate(cat, amt);
     document.getElementById('amt').value = '';
     if (!isFixed) document.getElementById('note-text').value = '';
     status.textContent = 'logging...';
     btn.disabled = true;
 
-    if (isFixed) autoCheckFixed(note);
+    if (isFixed && note) {
+      fixedState[note] = true;
+      saveFixedState(fixedState);
+      if (activeKPI === 'cycle') renderBreakdown('cycle');
+    }
 
     try {
-      const data = await post({ date: todayStr(), cat, amt, note });
+      var data = await post({ date: todayStr(), cat, amt, note });
       if (data.success) {
         if (data.breakdown) breakdown = data.breakdown;
         applyData(data);
@@ -528,7 +575,8 @@
     } catch(e) {
       currentData = prevData;
       updateDisplay(prevData);
-      const q = getQueue(); q.push({ date: todayStr(), cat, amt, note });
+      var q = getQueue();
+      q.push({ date: todayStr(), cat, amt, note });
       saveQueue(q);
       showOfflineBadge();
       status.textContent = 'saved offline — will sync when connected';
