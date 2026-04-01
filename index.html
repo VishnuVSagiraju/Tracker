@@ -22,7 +22,7 @@
     .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s; }
     .hint { font-size: 12px; color: #999; margin-top: 4px; }
     label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; margin-top: 1rem; }
-    select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: white; appearance: none; }
+    select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: white; -webkit-appearance: none; }
     .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 1rem; background: #111; color: white; }
     .btn:active { opacity: 0.8; }
     .btn:disabled { opacity: 0.4; cursor: default; }
@@ -43,11 +43,11 @@
     .toggle input:checked + .slider:before { transform: translateX(18px); }
     .add-row { display: flex; gap: 8px; margin-top: 1rem; }
     .add-row input { flex: 1; margin-top: 0; }
-    .add-row .btn { width: auto; margin-top: 0; padding: 10px 16px; }
+    .add-row .btn { width: auto; margin-top: 0; padding: 10px 16px; font-size: 14px; }
     .nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #eee; display: flex; height: 60px; z-index: 100; }
     .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: none; border: none; cursor: pointer; color: #bbb; font-size: 11px; }
     .nav-btn.active { color: #111; }
-    .nav-icon { font-size: 22px; line-height: 1; }
+    .nav-icon { font-size: 20px; line-height: 1; }
   </style>
 </head>
 <body>
@@ -56,19 +56,16 @@
   <h2>expense tracker</h2>
   <div class="subtitle" id="cycle-label">loading...</div>
   <div class="badge" id="offline-badge"></div>
-
   <div class="grid3">
     <div class="metric"><div class="metric-label">today</div><div class="metric-value" id="s-today">—</div></div>
     <div class="metric"><div class="metric-label">this week</div><div class="metric-value" id="s-week">—</div></div>
     <div class="metric"><div class="metric-label">this cycle</div><div class="metric-value" id="s-cycle">—</div></div>
   </div>
-
   <div class="card">
     <div class="row"><span>cycle budget</span><span id="budget-pct">0%</span></div>
     <div class="bar-bg"><div class="bar-fill" id="bar" style="width:0%"></div></div>
     <div class="hint" id="remaining">loading...</div>
   </div>
-
   <div class="card">
     <label>category</label>
     <select id="cat"></select>
@@ -83,19 +80,17 @@
 
 <div id="tab-settings" class="tab">
   <h2>settings</h2>
-  <div class="subtitle">manage your pay cycle and categories</div>
-
+  <div class="subtitle">pay cycle and categories</div>
   <div class="card">
     <div class="section-title">pay cycle</div>
     <button class="btn btn-green" id="payday-btn" onclick="logPayday()">I got paid today</button>
     <div class="hint" id="last-payday" style="margin-top:8px;">last payday: —</div>
   </div>
-
   <div class="card">
     <div class="section-title">categories</div>
     <div id="cat-list"></div>
     <div class="add-row">
-      <input type="text" id="new-cat" placeholder="add category" />
+      <input type="text" id="new-cat" placeholder="new category name" />
       <button class="btn btn-outline" onclick="addCategory()">add</button>
     </div>
     <button class="btn" onclick="saveCategories()">save categories</button>
@@ -117,6 +112,7 @@
   const SECRET_KEY = "vv_tracker_2026";
   const QUEUE_KEY = "vv_queue";
   let cats = [];
+  let currentData = { today: 0, week: 0, cycle: 0, cycleBudget: 0, budget: 7000, remaining: 7000 };
 
   function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
   function todayStr() { return new Date().toISOString().slice(0, 10); }
@@ -130,29 +126,69 @@
     document.getElementById('nav-' + tab).classList.add('active');
   }
 
-  function updateDisplay(data) {
-    document.getElementById('s-today').textContent = fmt(data.today || 0);
-    document.getElementById('s-week').textContent = fmt(data.week || 0);
-    document.getElementById('s-cycle').textContent = fmt(data.cycleBudget || 0);
-    var budget = data.budget || 7000;
-    var spent = data.cycleBudget || 0;
-    var pct = Math.min(100, Math.round((spent / budget) * 100));
-    document.getElementById('bar').style.width = pct + '%';
-    document.getElementById('bar').style.background = pct >= 90 ? '#E24B4A' : pct >= 70 ? '#EF9F27' : '#1D9E75';
-    document.getElementById('budget-pct').textContent = pct + '%';
-    document.getElementById('remaining').textContent = fmt(data.remaining || budget) + ' remaining of ' + fmt(budget);
-    document.getElementById('cycle-label').textContent = data.lastPayday ? 'cycle from ' + data.lastPayday : 'no payday set — tap settings';
-    document.getElementById('last-payday').textContent = 'last payday: ' + (data.lastPayday || 'not set');
+  async function post(body) {
+    const res = await fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ key: SECRET_KEY, ...body })
+    });
+    return await res.json();
+  }
+
+  async function loadSummary() {
+    try {
+      const res = await fetch(WEBHOOK + '?key=' + SECRET_KEY);
+      const data = await res.json();
+      if (!data.error) applyData(data);
+    } catch(e) {
+      document.getElementById('remaining').textContent = 'offline — will sync when connected';
+    }
+  }
+
+  function applyData(data) {
+    currentData = data;
+    updateDisplay(data);
     if (data.categories && data.categories.length) {
       cats = data.categories;
       renderCatDropdown();
       renderCatList();
     }
+    if (data.lastPayday) {
+      document.getElementById('cycle-label').textContent = 'cycle from ' + data.lastPayday;
+      document.getElementById('last-payday').textContent = 'last payday: ' + data.lastPayday;
+    }
+  }
+
+  function updateDisplay(data) {
+    document.getElementById('s-today').textContent = fmt(data.today || 0);
+    document.getElementById('s-week').textContent = fmt(data.week || 0);
+    document.getElementById('s-cycle').textContent = fmt(data.cycleBudget || 0);
+    const budget = data.budget || 7000;
+    const spent = data.cycleBudget || 0;
+    const pct = Math.min(100, Math.round((spent / budget) * 100));
+    const bar = document.getElementById('bar');
+    bar.style.width = pct + '%';
+    bar.style.background = pct >= 90 ? '#E24B4A' : pct >= 70 ? '#EF9F27' : '#1D9E75';
+    document.getElementById('budget-pct').textContent = pct + '%';
+    document.getElementById('remaining').textContent = fmt(data.remaining || budget) + ' remaining of ' + fmt(budget);
+  }
+
+  function optimisticUpdate(cat, amt) {
+    const prev = { ...currentData };
+    const inBudget = cats.find(c => c.name === cat)?.inBudget;
+    const updated = { ...currentData };
+    updated.today += amt;
+    updated.week += amt;
+    updated.cycle += amt;
+    if (inBudget) { updated.cycleBudget += amt; updated.remaining -= amt; }
+    currentData = updated;
+    updateDisplay(updated);
+    return prev;
   }
 
   function renderCatDropdown() {
-    var sel = document.getElementById('cat');
-    var cur = sel.value;
+    const sel = document.getElementById('cat');
+    const cur = sel.value;
     sel.innerHTML = cats.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
     if (cur) sel.value = cur;
   }
@@ -174,7 +210,7 @@
   function toggleCat(i, val) { cats[i].inBudget = val; renderCatList(); }
 
   function addCategory() {
-    var name = document.getElementById('new-cat').value.trim().toLowerCase();
+    const name = document.getElementById('new-cat').value.trim().toLowerCase();
     if (!name) return;
     cats.push({ name, inBudget: true });
     renderCatDropdown();
@@ -183,81 +219,83 @@
   }
 
   async function saveCategories() {
-    var status = document.getElementById('cfg-status');
+    const status = document.getElementById('cfg-status');
     status.textContent = 'saving...';
     try {
-      await fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: SECRET_KEY, action: 'update_categories', categories: cats }) });
-      status.textContent = 'saved!';
+      const data = await post({ action: 'update_categories', categories: cats });
+      status.textContent = data.success ? 'saved!' : 'error saving';
       setTimeout(() => status.textContent = '', 2000);
     } catch(e) { status.textContent = 'failed — try again'; }
   }
 
   async function logPayday() {
-    var btn = document.getElementById('payday-btn');
+    const btn = document.getElementById('payday-btn');
     btn.disabled = true; btn.textContent = 'logging...';
     try {
-      await fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: SECRET_KEY, action: 'payday', date: todayStr() }) });
-      await new Promise(r => setTimeout(r, 2000));
-      await loadSummary();
-      btn.textContent = 'logged!';
+      const data = await post({ action: 'payday', date: todayStr() });
+      if (data.success) applyData(data);
+      btn.textContent = 'done!';
       setTimeout(() => { btn.textContent = 'I got paid today'; btn.disabled = false; }, 2000);
     } catch(e) { btn.textContent = 'failed — try again'; btn.disabled = false; }
   }
 
   function showOfflineBadge() {
-    var q = getQueue();
-    var badge = document.getElementById('offline-badge');
+    const q = getQueue();
+    const badge = document.getElementById('offline-badge');
     if (q.length > 0) {
-      badge.textContent = q.length + ' expense(s) pending — tap to retry';
+      badge.textContent = q.length + ' expense(s) pending — tap to sync';
       badge.classList.add('show');
       badge.onclick = flushQueue;
     } else { badge.classList.remove('show'); }
   }
 
   async function flushQueue() {
-    var q = getQueue();
+    const q = getQueue();
     if (!q.length) return;
     try {
-      await fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: SECRET_KEY, action: 'bulk', entries: q }) });
-      saveQueue([]);
-      showOfflineBadge();
-      await new Promise(r => setTimeout(r, 1500));
-      await loadSummary();
+      const data = await post({ action: 'bulk', entries: q });
+      if (data.success) {
+        saveQueue([]);
+        showOfflineBadge();
+        applyData(data);
+      }
     } catch(e) {}
   }
 
-  async function loadSummary() {
-    try {
-      var res = await fetch(WEBHOOK + '?key=' + SECRET_KEY);
-      var data = await res.json();
-      if (!data.error) updateDisplay(data);
-    } catch(e) { document.getElementById('remaining').textContent = 'offline — data will sync when connected'; }
-  }
-
   async function logExpense() {
-    var cat = document.getElementById('cat').value;
-    var amt = parseFloat(document.getElementById('amt').value);
-    var note = document.getElementById('note').value.trim();
-    var status = document.getElementById('log-status');
-    var btn = document.querySelector('#tab-log .btn');
+    const cat = document.getElementById('cat').value;
+    const amt = parseFloat(document.getElementById('amt').value);
+    const note = document.getElementById('note').value.trim();
+    const status = document.getElementById('log-status');
+    const btn = document.querySelector('#tab-log .btn');
+
     if (!amt || amt <= 0) { status.textContent = 'enter a valid amount'; return; }
+
+    const prevData = optimisticUpdate(cat, amt);
+    document.getElementById('amt').value = '';
+    document.getElementById('note').value = '';
     status.textContent = 'logging...';
     btn.disabled = true;
-    var entry = { date: todayStr(), cat, amt, note };
+
     try {
-      await fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: SECRET_KEY, ...entry }) });
-      status.textContent = 'logged!';
-      document.getElementById('amt').value = '';
-      document.getElementById('note').value = '';
-      await new Promise(r => setTimeout(r, 1500));
-      await loadSummary();
-      status.textContent = '';
+      const data = await post({ date: todayStr(), cat, amt, note });
+      if (data.success) {
+        applyData(data);
+        status.textContent = 'logged!';
+        setTimeout(() => status.textContent = '', 1500);
+      } else {
+        currentData = prevData;
+        updateDisplay(prevData);
+        status.textContent = 'error: ' + (data.error || 'unknown');
+      }
     } catch(e) {
-      var q = getQueue(); q.push(entry); saveQueue(q);
+      currentData = prevData;
+      updateDisplay(prevData);
+      const q = getQueue();
+      q.push({ date: todayStr(), cat, amt, note });
+      saveQueue(q);
       showOfflineBadge();
       status.textContent = 'saved offline — will sync when connected';
-      document.getElementById('amt').value = '';
-      document.getElementById('note').value = '';
     }
     btn.disabled = false;
   }
