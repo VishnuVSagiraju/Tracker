@@ -15,13 +15,23 @@
     h2 { font-size: 18px; font-weight: 600; color: #111; margin-bottom: 0.25rem; }
     .subtitle { font-size: 12px; color: #999; margin-bottom: 1.25rem; }
     .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem; }
-    .metric { background: white; border-radius: 12px; padding: 0.75rem; }
+    .metric { background: white; border-radius: 12px; padding: 0.75rem; cursor: pointer; transition: box-shadow 0.15s; border: 2px solid transparent; }
+    .metric.active { border-color: #111; }
+    .metric:active { opacity: 0.8; }
     .metric-label { font-size: 11px; color: #999; margin-bottom: 3px; }
     .metric-value { font-size: 17px; font-weight: 600; color: #111; }
+    .metric-value.green { color: #1D9E75; }
+    .metric-value.amber { color: #EF9F27; }
+    .metric-value.red { color: #E24B4A; }
+    .breakdown-panel { background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; display: none; }
+    .breakdown-panel.show { display: block; }
+    .breakdown-title { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+    .breakdown-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+    .breakdown-row:last-child { border-bottom: none; }
     .card { background: white; border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem; }
     .row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #666; margin-bottom: 6px; }
     .bar-bg { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s; }
+    .bar-fill { height: 100%; border-radius: 3px; background: #1D9E75; transition: width 0.3s, background 0.3s; }
     .hint { font-size: 12px; color: #999; margin-top: 4px; }
     label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; margin-top: 1rem; }
     select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: white; -webkit-appearance: none; }
@@ -30,10 +40,25 @@
     .btn:disabled { opacity: 0.4; cursor: default; }
     .btn-green { background: #1D9E75; }
     .btn-outline { background: white; color: #111; border: 1px solid #ddd; }
+    .btn-sm { width: auto; padding: 10px 16px; font-size: 14px; margin-top: 0; }
     .status { margin-top: 0.75rem; text-align: center; font-size: 13px; color: #666; min-height: 18px; }
     .badge { display: none; background: #FFF3CD; color: #856404; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-bottom: 1rem; text-align: center; cursor: pointer; }
     .badge.show { display: block; }
     .section-title { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+    .fixed-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+    .fixed-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+    .fixed-item.done { background: #f0faf5; border-color: #1D9E75; }
+    .fixed-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.15s; }
+    .fixed-item.done .fixed-check { background: #1D9E75; border-color: #1D9E75; color: white; }
+    .fixed-name { font-size: 14px; color: #111; }
+    .fixed-item.done .fixed-name { color: #1D9E75; text-decoration: line-through; }
+    .cat-section { margin-top: 1.5rem; }
+    .cat-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0; border-top: 1px solid #eee; }
+    .cat-toggle-header span { font-size: 13px; color: #666; }
+    .cat-toggle-arrow { font-size: 12px; color: #999; transition: transform 0.2s; }
+    .cat-toggle-arrow.open { transform: rotate(180deg); }
+    .cat-body { display: none; }
+    .cat-body.open { display: block; }
     .cat-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
     .cat-name { font-size: 15px; color: #111; }
     .cat-meta { font-size: 11px; color: #bbb; margin-right: 8px; }
@@ -45,11 +70,12 @@
     .toggle input:checked + .slider:before { transform: translateX(18px); }
     .add-row { display: flex; gap: 8px; margin-top: 1rem; }
     .add-row input { flex: 1; margin-top: 0; }
-    .add-row .btn { width: auto; margin-top: 0; padding: 10px 16px; font-size: 14px; }
     .nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #eee; display: flex; height: 60px; z-index: 100; }
     .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: none; border: none; cursor: pointer; color: #bbb; font-size: 11px; }
     .nav-btn.active { color: #111; }
     .nav-icon { font-size: 20px; line-height: 1; }
+    .daily-budget-row { display: flex; align-items: center; gap: 8px; margin-top: 0.5rem; }
+    .daily-budget-row input { width: 100px; margin-top: 0; }
   </style>
 </head>
 <body>
@@ -58,23 +84,41 @@
   <h2>expense tracker</h2>
   <div class="subtitle" id="cycle-label">loading...</div>
   <div class="badge" id="offline-badge"></div>
+
   <div class="grid3">
-    <div class="metric"><div class="metric-label">today</div><div class="metric-value" id="s-today">—</div></div>
-    <div class="metric"><div class="metric-label">this week</div><div class="metric-value" id="s-week">—</div></div>
-    <div class="metric"><div class="metric-label">this cycle</div><div class="metric-value" id="s-cycle">—</div></div>
+    <div class="metric" id="kpi-today" onclick="toggleBreakdown('today')">
+      <div class="metric-label">today</div>
+      <div class="metric-value" id="s-today">—</div>
+    </div>
+    <div class="metric" id="kpi-week" onclick="toggleBreakdown('week')">
+      <div class="metric-label">this week</div>
+      <div class="metric-value" id="s-week">—</div>
+    </div>
+    <div class="metric" id="kpi-cycle" onclick="toggleBreakdown('cycle')">
+      <div class="metric-label">this cycle</div>
+      <div class="metric-value" id="s-cycle">—</div>
+    </div>
   </div>
+
+  <div class="breakdown-panel" id="breakdown-panel">
+    <div class="breakdown-title" id="breakdown-title">today</div>
+    <div id="breakdown-rows"></div>
+  </div>
+
   <div class="card">
     <div class="row"><span>cycle budget</span><span id="budget-pct">0%</span></div>
     <div class="bar-bg"><div class="bar-fill" id="bar" style="width:0%"></div></div>
     <div class="hint" id="remaining">loading...</div>
   </div>
+
   <div class="card">
     <label>category</label>
-    <select id="cat"></select>
+    <select id="cat" onchange="onCatChange()"></select>
     <label>amount (₹)</label>
     <input type="number" id="amt" placeholder="0" min="0" inputmode="numeric" />
-    <label>note (optional)</label>
-    <input type="text" id="note" placeholder="e.g. dinner, auto" />
+    <label id="note-label">note (optional)</label>
+    <select id="note-select" style="display:none"></select>
+    <input type="text" id="note-text" placeholder="e.g. dinner, auto" />
     <button class="btn" onclick="logExpense()">log expense</button>
     <div class="status" id="log-status"></div>
   </div>
@@ -82,21 +126,48 @@
 
 <div id="tab-settings" class="tab">
   <h2>settings</h2>
-  <div class="subtitle">pay cycle and categories</div>
+  <div class="subtitle">pay cycle, fixed expenses, categories</div>
+
   <div class="card">
     <div class="section-title">pay cycle</div>
     <button class="btn btn-green" id="payday-btn" onclick="logPayday()">I got paid today</button>
     <div class="hint" id="last-payday" style="margin-top:8px;">last payday: —</div>
   </div>
+
   <div class="card">
-    <div class="section-title">categories</div>
-    <div id="cat-list"></div>
-    <div class="add-row">
-      <input type="text" id="new-cat" placeholder="new category name" />
-      <button class="btn btn-outline" onclick="addCategory()">add</button>
+    <div class="section-title">daily budget</div>
+    <div class="daily-budget-row">
+      <input type="number" id="daily-budget-input" placeholder="500" inputmode="numeric" />
+      <button class="btn btn-outline btn-sm" onclick="saveDailyBudget()">save</button>
     </div>
-    <button class="btn" onclick="saveCategories()">save categories</button>
-    <div class="status" id="cfg-status"></div>
+    <div class="status" id="daily-budget-status"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">fixed expenses</div>
+    <div class="fixed-list" id="fixed-manage-list"></div>
+    <div class="add-row">
+      <input type="text" id="new-fixed" placeholder="new fixed expense" />
+      <button class="btn btn-outline btn-sm" onclick="addFixed()">add</button>
+    </div>
+    <button class="btn" onclick="saveFixed()">save fixed expenses</button>
+    <div class="status" id="fixed-status"></div>
+  </div>
+
+  <div class="card">
+    <div class="cat-toggle-header" onclick="toggleCatSection()">
+      <span>manage categories</span>
+      <span class="cat-toggle-arrow" id="cat-arrow">▼</span>
+    </div>
+    <div class="cat-body" id="cat-body">
+      <div id="cat-list" style="margin-top:0.75rem;"></div>
+      <div class="add-row">
+        <input type="text" id="new-cat" placeholder="new category name" />
+        <button class="btn btn-outline btn-sm" onclick="addCategory()">add</button>
+      </div>
+      <button class="btn" onclick="saveCategories()">save categories</button>
+      <div class="status" id="cfg-status"></div>
+    </div>
   </div>
 </div>
 
@@ -113,19 +184,34 @@
   const WEBHOOK = "https://script.google.com/macros/s/AKfycbx3u4eKack3-25xsPMi-CsL0wheLdXf0i2hpoA3YIy9Y5AWirCl92Gn218MiAXDtL0S/exec";
   const SECRET_KEY = "vv_tracker_2026";
   const QUEUE_KEY = "vv_queue";
+  const FIXED_STATE_KEY = "vv_fixed_state";
+
   let cats = [];
-  let currentData = { today: 0, week: 0, cycle: 0, cycleBudget: 0, budget: 7000, remaining: 7000 };
+  let fixedExpenses = [];
+  let fixedState = {};
+  let breakdown = { today: {}, week: {}, cycle: {} };
+  let currentData = { today: 0, week: 0, cycle: 0, cycleBudget: 0, budget: 7000, remaining: 7000, dailyBudget: 500 };
+  let activeKPI = null;
 
   function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
   function todayStr() { return new Date().toISOString().slice(0, 10); }
   function getQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch(e) { return []; } }
   function saveQueue(q) { try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch(e) {} }
+  function loadFixedState() { try { return JSON.parse(localStorage.getItem(FIXED_STATE_KEY) || '{}'); } catch(e) { return {}; } }
+  function saveFixedState(s) { try { localStorage.setItem(FIXED_STATE_KEY, JSON.stringify(s)); } catch(e) {} }
 
   function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     document.getElementById('nav-' + tab).classList.add('active');
+  }
+
+  function toggleCatSection() {
+    const body = document.getElementById('cat-body');
+    const arrow = document.getElementById('cat-arrow');
+    body.classList.toggle('open');
+    arrow.classList.toggle('open');
   }
 
   async function post(body) {
@@ -149,22 +235,41 @@
 
   function applyData(data) {
     currentData = data;
+    if (data.breakdown) breakdown = data.breakdown;
     updateDisplay(data);
     if (data.categories && data.categories.length) {
       cats = data.categories;
       renderCatDropdown();
       renderCatList();
     }
+    if (data.fixedExpenses && data.fixedExpenses.length) {
+      fixedExpenses = data.fixedExpenses;
+      fixedState = loadFixedState();
+      renderFixedChecklist();
+      renderFixedManage();
+      renderNoteSelect();
+    }
     if (data.lastPayday) {
       document.getElementById('cycle-label').textContent = 'cycle from ' + data.lastPayday;
       document.getElementById('last-payday').textContent = 'last payday: ' + data.lastPayday;
     }
+    if (data.dailyBudget) {
+      document.getElementById('daily-budget-input').value = data.dailyBudget;
+    }
+    if (activeKPI) renderBreakdown(activeKPI);
   }
 
   function updateDisplay(data) {
-    document.getElementById('s-today').textContent = fmt(data.today || 0);
+    const dailyBudget = data.dailyBudget || 500;
+    const todayAmt = data.today || 0;
+    const todayPct = todayAmt / dailyBudget;
+    const todayEl = document.getElementById('s-today');
+    todayEl.textContent = fmt(todayAmt);
+    todayEl.className = 'metric-value' + (todayPct >= 1 ? ' red' : todayPct >= 0.7 ? ' amber' : ' green');
+
     document.getElementById('s-week').textContent = fmt(data.week || 0);
     document.getElementById('s-cycle').textContent = fmt(data.cycleBudget || 0);
+
     const budget = data.budget || 7000;
     const spent = data.cycleBudget || 0;
     const pct = Math.min(100, Math.round((spent / budget) * 100));
@@ -175,17 +280,46 @@
     document.getElementById('remaining').textContent = fmt(data.remaining || budget) + ' remaining of ' + fmt(budget);
   }
 
-  function optimisticUpdate(cat, amt) {
-    const prev = { ...currentData };
-    const inBudget = cats.find(c => c.name === cat)?.inBudget;
-    const updated = { ...currentData };
-    updated.today += amt;
-    updated.week += amt;
-    updated.cycle += amt;
-    if (inBudget) { updated.cycleBudget += amt; updated.remaining -= amt; }
-    currentData = updated;
-    updateDisplay(updated);
-    return prev;
+  function toggleBreakdown(period) {
+    const panel = document.getElementById('breakdown-panel');
+    if (activeKPI === period && panel.classList.contains('show')) {
+      panel.classList.remove('show');
+      document.querySelectorAll('.metric').forEach(m => m.classList.remove('active'));
+      activeKPI = null;
+      return;
+    }
+    activeKPI = period;
+    document.querySelectorAll('.metric').forEach(m => m.classList.remove('active'));
+    document.getElementById('kpi-' + period).classList.add('active');
+    panel.classList.add('show');
+    renderBreakdown(period);
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function renderBreakdown(period) {
+    const data = breakdown[period] || {};
+    document.getElementById('breakdown-title').textContent = period === 'today' ? "today's spending" : period === 'week' ? "this week's spending" : "this cycle's spending";
+    const rows = Object.entries(data).sort((a, b) => b[1] - a[1]);
+    if (!rows.length) {
+      document.getElementById('breakdown-rows').innerHTML = '<div style="font-size:14px;color:#999;padding:8px 0;">no entries yet</div>';
+      return;
+    }
+    document.getElementById('breakdown-rows').innerHTML = rows.map(([cat, amt]) =>
+      `<div class="breakdown-row"><span>${cat}</span><span style="font-weight:600;">${fmt(amt)}</span></div>`
+    ).join('');
+  }
+
+  function onCatChange() {
+    const cat = document.getElementById('cat').value;
+    const isFixed = cat === 'rent & fixed';
+    document.getElementById('note-text').style.display = isFixed ? 'none' : 'block';
+    document.getElementById('note-select').style.display = isFixed ? 'block' : 'none';
+    document.getElementById('note-label').textContent = isFixed ? 'which expense?' : 'note (optional)';
+  }
+
+  function renderNoteSelect() {
+    const sel = document.getElementById('note-select');
+    sel.innerHTML = fixedExpenses.map(f => `<option value="${f}">${f}</option>`).join('');
   }
 
   function renderCatDropdown() {
@@ -193,6 +327,7 @@
     const cur = sel.value;
     sel.innerHTML = cats.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
     if (cur) sel.value = cur;
+    onCatChange();
   }
 
   function renderCatList() {
@@ -207,6 +342,85 @@
           </label>
         </div>
       </div>`).join('');
+  }
+
+  function renderFixedChecklist() {
+    const logTab = document.getElementById('tab-log');
+    let checklist = document.getElementById('fixed-checklist');
+    if (!checklist) {
+      checklist = document.createElement('div');
+      checklist.id = 'fixed-checklist';
+      checklist.className = 'card';
+      checklist.innerHTML = '<div class="section-title">fixed expenses</div><div id="fixed-items"></div>';
+      logTab.insertBefore(checklist, logTab.querySelector('.card:last-of-type'));
+    }
+    document.getElementById('fixed-items').innerHTML = fixedExpenses.map(f => `
+      <div class="fixed-item ${fixedState[f] ? 'done' : ''}" onclick="toggleFixed('${f}')">
+        <div class="fixed-check">${fixedState[f] ? '✓' : ''}</div>
+        <span class="fixed-name">${f}</span>
+      </div>`).join('');
+  }
+
+  function renderFixedManage() {
+    document.getElementById('fixed-manage-list').innerHTML = fixedExpenses.map((f, i) => `
+      <div class="cat-row">
+        <span class="cat-name">${f}</span>
+        <button class="btn btn-outline btn-sm" onclick="removeFixed(${i})" style="padding:4px 10px;font-size:12px;color:#E24B4A;border-color:#E24B4A;">remove</button>
+      </div>`).join('');
+  }
+
+  function toggleFixed(name) {
+    fixedState[name] = !fixedState[name];
+    saveFixedState(fixedState);
+    renderFixedChecklist();
+  }
+
+  function autoCheckFixed(noteName) {
+    if (fixedExpenses.includes(noteName)) {
+      fixedState[noteName] = true;
+      saveFixedState(fixedState);
+      renderFixedChecklist();
+    }
+  }
+
+  function addFixed() {
+    const name = document.getElementById('new-fixed').value.trim();
+    if (!name) return;
+    fixedExpenses.push(name);
+    renderFixedChecklist();
+    renderFixedManage();
+    renderNoteSelect();
+    document.getElementById('new-fixed').value = '';
+  }
+
+  function removeFixed(i) {
+    fixedExpenses.splice(i, 1);
+    renderFixedChecklist();
+    renderFixedManage();
+    renderNoteSelect();
+  }
+
+  async function saveFixed() {
+    const status = document.getElementById('fixed-status');
+    status.textContent = 'saving...';
+    try {
+      const data = await post({ action: 'update_fixed', fixedExpenses });
+      status.textContent = data.success ? 'saved!' : 'error saving';
+      setTimeout(() => status.textContent = '', 2000);
+    } catch(e) { status.textContent = 'failed — try again'; }
+  }
+
+  async function saveDailyBudget() {
+    const val = parseFloat(document.getElementById('daily-budget-input').value);
+    const status = document.getElementById('daily-budget-status');
+    if (!val || val <= 0) { status.textContent = 'enter a valid amount'; return; }
+    status.textContent = 'saving...';
+    try {
+      const data = await post({ action: 'update_daily_budget', dailyBudget: val });
+      currentData.dailyBudget = val;
+      status.textContent = data.success ? 'saved!' : 'error';
+      setTimeout(() => status.textContent = '', 2000);
+    } catch(e) { status.textContent = 'failed — try again'; }
   }
 
   function toggleCat(i, val) { cats[i].inBudget = val; renderCatList(); }
@@ -233,6 +447,8 @@
   async function logPayday() {
     const btn = document.getElementById('payday-btn');
     btn.disabled = true; btn.textContent = 'logging...';
+    fixedState = {};
+    saveFixedState(fixedState);
     try {
       const data = await post({ action: 'payday', date: todayStr() });
       if (data.success) applyData(data);
@@ -264,10 +480,26 @@
     } catch(e) {}
   }
 
+  function optimisticUpdate(cat, amt) {
+    const prev = { ...currentData };
+    const inBudget = cats.find(c => c.name === cat)?.inBudget;
+    const updated = { ...currentData };
+    updated.today += amt;
+    updated.week += amt;
+    updated.cycle += amt;
+    if (inBudget) { updated.cycleBudget += amt; updated.remaining -= amt; }
+    currentData = updated;
+    updateDisplay(updated);
+    return prev;
+  }
+
   async function logExpense() {
     const cat = document.getElementById('cat').value;
     const amt = parseFloat(document.getElementById('amt').value);
-    const note = document.getElementById('note').value.trim();
+    const isFixed = cat === 'rent & fixed';
+    const note = isFixed
+      ? document.getElementById('note-select').value
+      : document.getElementById('note-text').value.trim();
     const status = document.getElementById('log-status');
     const btn = document.querySelector('#tab-log .btn');
 
@@ -275,13 +507,16 @@
 
     const prevData = optimisticUpdate(cat, amt);
     document.getElementById('amt').value = '';
-    document.getElementById('note').value = '';
+    if (!isFixed) document.getElementById('note-text').value = '';
     status.textContent = 'logging...';
     btn.disabled = true;
+
+    if (isFixed) autoCheckFixed(note);
 
     try {
       const data = await post({ date: todayStr(), cat, amt, note });
       if (data.success) {
+        if (data.breakdown) breakdown = data.breakdown;
         applyData(data);
         status.textContent = 'logged!';
         setTimeout(() => status.textContent = '', 1500);
@@ -293,8 +528,7 @@
     } catch(e) {
       currentData = prevData;
       updateDisplay(prevData);
-      const q = getQueue();
-      q.push({ date: todayStr(), cat, amt, note });
+      const q = getQueue(); q.push({ date: todayStr(), cat, amt, note });
       saveQueue(q);
       showOfflineBadge();
       status.textContent = 'saved offline — will sync when connected';
@@ -302,12 +536,13 @@
     btn.disabled = false;
   }
 
-  flushQueue();
-  loadSummary();
-  showOfflineBadge();
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/Tracker/sw.js', { scope: '/Tracker/' });
   }
+
+  flushQueue();
+  loadSummary();
+  showOfflineBadge();
 </script>
 </body>
 </html>
