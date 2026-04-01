@@ -1,5 +1,9 @@
-const CACHE = 'tracker-v3';
+const CACHE = 'tracker-v4';
 const FILES = ['/Tracker/', '/Tracker/index.html', '/Tracker/manifest.json', '/Tracker/sw.js'];
+
+self.addEventListener('message', e => {
+  if (e.data === 'skipWaiting') self.skipWaiting();
+});
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
